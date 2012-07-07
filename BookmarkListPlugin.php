@@ -33,19 +33,17 @@ if (!defined('STATUSNET')) {
 }
 
 /**
- * Bookmark plugin main class
+ * BookmarkList plugin main class
  *
  * @category  Bookmark
  * @package   StatusNet
- * @author    Brion Vibber <brionv@status.net>
- * @author    Evan Prodromou <evan@status.net>
- * @copyright 2010 StatusNet, Inc.
+ * @author    Stephane Berube <chimo@chromic.org>
  * @license   http://www.fsf.org/licensing/licenses/agpl-3.0.html AGPL 3.0
- * @link      http://status.net/
+ * @link      https://github.com/chimo/BookmarkList
  */
 class BookmarkListPlugin extends Plugin
 {
-    const VERSION         = '0.1';
+    const VERSION = '0.1';
 
     /**
      * Show the CSS necessary for this plugin
@@ -65,6 +63,7 @@ class BookmarkListPlugin extends Plugin
         $action->script($this->path('js/bookmark.js'));
         return true;
     }
+
     /**
      * Load related modules when needed
      *
@@ -113,7 +112,7 @@ class BookmarkListPlugin extends Plugin
         $versions[] = array('name' => 'BookmarkList',
                             'version' => self::VERSION,
                             'author' => 'Stephane Berube',
-                            'homepage' => 'http://github.com/chimo/sn-bookmark-list',
+                            'homepage' => 'https://github.com/chimo/BookmarkList',
                             'description' =>
                             // TRANS: Plugin description.
                             _m('Simple extension for displaying bookmarks.'));
