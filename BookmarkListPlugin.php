@@ -46,25 +46,6 @@ class BookmarkListPlugin extends Plugin
     const VERSION = '0.1';
 
     /**
-     * Show the CSS necessary for this plugin
-     *
-     * @param Action $action the action being run
-     *
-     * @return boolean hook value
-     */
-    function onEndShowStyles($action)
-    {
-        $action->cssLink($this->path('bookmark.css'));
-        return true;
-    }
-
-    function onEndShowScripts($action)
-    {
-        $action->script($this->path('js/bookmark.js'));
-        return true;
-    }
-
-    /**
      * Load related modules when needed
      *
      * @param string $cls Name of the class to be loaded
@@ -97,6 +78,35 @@ class BookmarkListPlugin extends Plugin
         $m->connect('bookmarks',
                     array('action' => 'bookmarks'));
 
+        return true;
+    }
+
+    /**
+     * Modify the default menu to link to our custom action
+     *
+     * Using event handlers, it's possible to modify the default UI for pages
+     * almost without limit. In this method, we add a menu item to the default
+     * primary menu for the interface to link to our action.
+     *
+     * The Action class provides a rich set of events to hook, as well as output
+     * methods.
+     *
+     * @param Action $action The current action handler. Use this to
+     *                       do any output.
+     *
+     * @return boolean hook value; true means continue processing, false means stop.
+     *
+     * @see Action
+     */
+    function onEndPersonalGroupNav($action)
+    {
+        // common_local_url() gets the correct URL for the action name
+        // we provide
+        $action->menuItem(common_local_url('bookmarks'),
+                          // TRANS: Menu item in sample plugin.
+                          _m('Bookmarks'),
+                          // TRANS: Menu item title in sample plugin.
+                          _m('A list of your bookmarks'), false, 'nav_social');
         return true;
     }
 

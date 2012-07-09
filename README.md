@@ -1,4 +1,4 @@
-sn-bookmark-list
+BookmarkList
 ================
 
 Tiny plugin to display your StatusNet Bookmarks
@@ -6,5 +6,5 @@ Tiny plugin to display your StatusNet Bookmarks
 ## Instructions
 
 Drop the files in your `/plugins/` folder  
-Tell `/config.php` to use it with: `addPlugin('BookmarkList');`
+Tell `/config.php` to use it with: `addPlugin('BookmarkList');`  
 Visit `/bookmarks` on your SN instance to view your bookmarks.
