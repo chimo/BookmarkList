@@ -31,20 +31,16 @@ if (!defined('STATUSNET')) {
     exit(1);
 }
 
+require_once 'bookmarksnoticestream.php';
+
 /**
- * Give a warm greeting to our friendly user
- *
- * This sample action shows some basic ways of doing output in an action
- * class.
- *
- * Action classes have several output methods that they override from
- * the parent class.
+ * List currently logged-in user's bookmakrs
  *
  * @category Bookmark
  * @package  StatusNet
- * @author   Evan Prodromou <evan@status.net>
+ * @author   Stephane Berube <chimo@chromic.org>
  * @license  http://www.fsf.org/licensing/licenses/agpl.html AGPLv3
- * @link     http://status.net/
+ * @link     https://github.com/chimo/BookmarkList
  */
 class BookmarksAction extends Action
 {
@@ -70,11 +66,33 @@ class BookmarksAction extends Action
     {
         parent::prepare($args);
 
-        $this->user = common_current_user();
+        // TODO: Make this viewable by anonymous visitors 
+        // (just like all the other streams)
+        if(!common_logged_in()) {
+            $this->clientError(_('Not logged in'));
+            return;
+        } else if (!common_is_real_login()) {
+            // Cookie theft means that automatic logins can't
+            // change important settings or see private info, and
+            // _all_ our settings are important
+            common_set_returnto($this->selfUrl());
+            $user = common_current_user();
+            if (Event::handle('RedirectToLogin', array($this, $user))) {
+                common_redirect(common_local_url('login'), 303);
+            }
+        } else {
+            $this->showPage();
+        }
 
-        if (!empty($this->user)) {
-            $this->bookmarks = Memcached_DataObject::cachedQuery('Bookmark', sprintf("SELECT * FROM bookmark
-                WHERE profile_id = %d", $this->user->id))->_items;
+        $this->user = common_current_user();
+        $this->page = ($this->arg('page')) ? ($this->arg('page')+0) : 1;
+
+        $stream = new BookmarksNoticeStream($this->user->id, true);
+        $this->notices = $stream->getNotices(($this->page-1)*NOTICES_PER_PAGE,
+                                                NOTICES_PER_PAGE + 1); 
+
+        if($this->page > 1 && $this->notices->N == 0) {
+            throw new ClientException(_('No such page.'), 404);
         }
 
         return true;
@@ -131,12 +149,18 @@ class BookmarksAction extends Action
      */
     function showContent()
     {
-        foreach($this->bookmarks as $bookmark) {
-            $notice = Notice::staticGet('uri', $bookmark->uri);
-            $nli = new NoticeListItem($notice, $this);
-            $bli = new BookmarkListItem($nli);
-            $bli->showNotice();
+        $nl = new NoticeList($this->notices, $this);
+
+        $cnt = $nl->show();
+
+        if ($cnt == 0) {
+            $this->showEmptyList();
         }
+
+        $this->pagination($this->page > 1,
+                $cnt > NOTICES_PER_PAGE,
+                $this->page,
+                'bookmarks');
     }
 
     /**
