@@ -81,19 +81,19 @@ class BookmarksAction extends Action
                 common_redirect(common_local_url('login'), 303);
             }
         } else {
-            $this->showPage();
+            $this->user = common_current_user();
+            $this->page = ($this->arg('page')) ? ($this->arg('page')+0) : 1;
+
+            $stream = new BookmarksNoticeStream($this->user->id, true);
+            $this->notices = $stream->getNotices(($this->page-1)*NOTICES_PER_PAGE,
+                                                    NOTICES_PER_PAGE + 1); 
+
+            if($this->page > 1 && $this->notices->N == 0) {
+                throw new ClientException(_('No such page.'), 404);
+            }
+            // $this->showPage();
         }
 
-        $this->user = common_current_user();
-        $this->page = ($this->arg('page')) ? ($this->arg('page')+0) : 1;
-
-        $stream = new BookmarksNoticeStream($this->user->id, true);
-        $this->notices = $stream->getNotices(($this->page-1)*NOTICES_PER_PAGE,
-                                                NOTICES_PER_PAGE + 1); 
-
-        if($this->page > 1 && $this->notices->N == 0) {
-            throw new ClientException(_('No such page.'), 404);
-        }
 
         return true;
     }
