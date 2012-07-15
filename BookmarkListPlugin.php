@@ -75,8 +75,16 @@ class BookmarkListPlugin extends Plugin
      */
     function onRouterInitialized($m)
     {
-        $m->connect('bookmarks',
-                    array('action' => 'bookmarks'));
+        if (common_config('singleuser', 'enabled')) {
+            $nickname = User::singleUserNickname();
+            $m->connect('bookmarks',
+                        array('action' => 'bookmarks'),
+                        array('nickname' => $nickname)); // FIXME: useless
+        } else {
+            $m->connect(':nickname/bookmarks',
+                        array('action' => 'bookmarks'),
+                        array('nickname' => Nickname::DISPLAY_FMT));
+        }
 
         return true;
     }
@@ -106,7 +114,7 @@ class BookmarkListPlugin extends Plugin
                           // TRANS: Menu item in sample plugin.
                           _m('Bookmarks'),
                           // TRANS: Menu item title in sample plugin.
-                          _m('A list of your bookmarks'), false, 'nav_social');
+                          _m('A list of your bookmarks'), false, 'nav_timeline_bookmarks');
         return true;
     }
 

@@ -66,34 +66,30 @@ class BookmarksAction extends Action
     {
         parent::prepare($args);
 
-        // TODO: Make this viewable by anonymous visitors 
-        // (just like all the other streams)
-        if(!common_logged_in()) {
-            $this->clientError(_('Not logged in'));
-            return;
-        } else if (!common_is_real_login()) {
-            // Cookie theft means that automatic logins can't
-            // change important settings or see private info, and
-            // _all_ our settings are important
-            common_set_returnto($this->selfUrl());
-            $user = common_current_user();
-            if (Event::handle('RedirectToLogin', array($this, $user))) {
-                common_redirect(common_local_url('login'), 303);
-            }
-        } else {
+        $nickname = $this->returnToArgs()[1]['nickname'];
+
+        if(!$nickname) {
             $this->user = common_current_user();
-            $this->page = ($this->arg('page')) ? ($this->arg('page')+0) : 1;
-
-            $stream = new BookmarksNoticeStream($this->user->id, true);
-            $this->notices = $stream->getNotices(($this->page-1)*NOTICES_PER_PAGE,
-                                                    NOTICES_PER_PAGE + 1); 
-
-            if($this->page > 1 && $this->notices->N == 0) {
-                throw new ClientException(_('No such page.'), 404);
-            }
-            // $this->showPage();
+        } else {
+            $this->user = User::staticGet('nickname', $nickname);
         }
 
+
+        if (!$this->user) {
+            // TRANS: Client error displayed when trying to display favourite notices for a non-existing user.
+            $this->clientError(_('No such user.'));
+            return false;
+        }
+
+        $this->page = ($this->arg('page')) ? ($this->arg('page')+0) : 1;
+
+        $stream = new BookmarksNoticeStream($this->user->id, true);
+        $this->notices = $stream->getNotices(($this->page-1)*NOTICES_PER_PAGE,
+                                                NOTICES_PER_PAGE + 1); 
+
+        if($this->page > 1 && $this->notices->N == 0) {
+            throw new ClientException(_('No such page.'), 404);
+        }
 
         return true;
     }
@@ -113,7 +109,6 @@ class BookmarksAction extends Action
     function handle($args)
     {
         parent::handle($args);
-
         $this->showPage();
     }
 
@@ -159,8 +154,8 @@ class BookmarksAction extends Action
 
         $this->pagination($this->page > 1,
                 $cnt > NOTICES_PER_PAGE,
-                $this->page,
-                'bookmarks');
+                $this->page, 'bookmarks',
+                array('nickname' => $this->user->nickname));
     }
 
     /**
