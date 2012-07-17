@@ -65,7 +65,6 @@ class BookmarksAction extends Action
     function prepare($args)
     {
         parent::prepare($args);
-
         $nickname = $this->returnToArgs()[1]['nickname'];
 
         if(!$nickname) {
