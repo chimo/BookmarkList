@@ -108,13 +108,7 @@ class BookmarkListPlugin extends Plugin
      */
     function onEndPersonalGroupNav($action)
     {
-        if (common_config('singleuser', 'enabled')) {
-            $nickname = User::singleUserNickname();
-        } else {
-            $nickname = $action->returnToArgs()[1]['nickname'];
-        }
-
-        $this->user = User::staticGet('nickname', $nickname);
+        $this->user = common_current_user();
 
         if (!$this->user) {
             // TRANS: Client error displayed when trying to display bookmarks for a non-existing user.
