@@ -108,18 +108,20 @@ class BookmarkListPlugin extends Plugin
      */
     function onEndPersonalGroupNav($action)
     {
-        // common_local_url() gets the correct URL for the action name
-        // we provide
+        if (common_config('singleuser', 'enabled')) {
+            $nickname = User::singleUserNickname();
+        } else {
+            $nickname = $this->returnToArgs()[1]['nickname'];
+        }
+        
+        $this->user = User::staticGet('nickname', $nickname);
 
-        $nickname = $action->returnToArgs()[1]['nickname'];
-
-        if(!$nickname) {
+/*        if(!$nickname) {
             $this->user = common_current_user();
             $nickname = $this->user->nickname;
         } else {
             $this->user = User::staticGet('nickname', $nickname);
-        }
-
+        } */
 
         if (!$this->user) {
             // TRANS: Client error displayed when trying to display favourite notices for a non-existing user.
