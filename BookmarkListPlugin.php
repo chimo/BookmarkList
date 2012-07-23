@@ -116,7 +116,7 @@ class BookmarkListPlugin extends Plugin
             return false;
         }
 
-        $action->menuItem(common_local_url('bookmarks', array('nickname' => $nickname)),
+        $action->menuItem(common_local_url('bookmarks', array('nickname' => $this->user->nickname)),
                           // TRANS: Menu item in sample plugin.
                           _m('Bookmarks'),
                           // TRANS: Menu item title in sample plugin.
