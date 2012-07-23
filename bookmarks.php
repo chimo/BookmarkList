@@ -74,12 +74,6 @@ class BookmarksAction extends Action
         
         $this->user = User::staticGet('nickname', $nickname);
 
-/*        if(!$nickname) {
-            $this->user = common_current_user();
-        } else {
-            $this->user = User::staticGet('nickname', $nickname);
-        } */
-
         if (!$this->user) {
             // TRANS: Client error displayed when trying to display bookmarks for a non-existing user.
             $this->clientError(_('No such user.'));
@@ -126,6 +120,7 @@ class BookmarksAction extends Action
      */
     function title()
     {
+
         if (empty($this->user)) {
             // TRANS: Page title for sample plugin.
             return _m('Log in');
@@ -149,6 +144,7 @@ class BookmarksAction extends Action
      */
     function showContent()
     {
+
         $nl = new NoticeList($this->notices, $this);
 
         $cnt = $nl->show();
@@ -161,6 +157,14 @@ class BookmarksAction extends Action
                 $cnt > NOTICES_PER_PAGE,
                 $this->page, 'bookmarks',
                 array('nickname' => $this->user->nickname));
+    }
+
+    function showEmptyList() {
+        $message = sprintf(_('This is %1$s\'s bookmark stream, but %1$s hasn\'t bookmarked anything yet.'), $this->user->nickname) . ' ';
+
+        $this->elementStart('div', 'guide');
+        $this->raw(common_markup_to_html($message));
+        $this->elementEnd('div');
     }
 
     /**

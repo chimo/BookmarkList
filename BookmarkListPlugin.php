@@ -111,20 +111,13 @@ class BookmarkListPlugin extends Plugin
         if (common_config('singleuser', 'enabled')) {
             $nickname = User::singleUserNickname();
         } else {
-            $nickname = $this->returnToArgs()[1]['nickname'];
+            $nickname = $action->returnToArgs()[1]['nickname'];
         }
-        
+
         $this->user = User::staticGet('nickname', $nickname);
 
-/*        if(!$nickname) {
-            $this->user = common_current_user();
-            $nickname = $this->user->nickname;
-        } else {
-            $this->user = User::staticGet('nickname', $nickname);
-        } */
-
         if (!$this->user) {
-            // TRANS: Client error displayed when trying to display favourite notices for a non-existing user.
+            // TRANS: Client error displayed when trying to display bookmarks for a non-existing user.
             $this->clientError(_('No such user.'));
             return false;
         }
