@@ -75,8 +75,16 @@ class BookmarkListPlugin extends Plugin
      */
     function onRouterInitialized($m)
     {
-        $m->connect('bookmarks',
-                    array('action' => 'bookmarks'));
+        if (common_config('singleuser', 'enabled')) {
+            $nickname = User::singleUserNickname();
+            $m->connect('bookmarks',
+                        array('action' => 'bookmarks'),
+                        array('nickname' => $nickname)); // FIXME: useless
+        } else {
+            $m->connect(':nickname/bookmarks',
+                        array('action' => 'bookmarks'),
+                        array('nickname' => Nickname::DISPLAY_FMT));
+        }
 
         return true;
     }
@@ -100,13 +108,25 @@ class BookmarkListPlugin extends Plugin
      */
     function onEndPersonalGroupNav($action)
     {
-        // common_local_url() gets the correct URL for the action name
-        // we provide
-        $action->menuItem(common_local_url('bookmarks'),
+        if (common_config('singleuser', 'enabled')) {
+            $nickname = User::singleUserNickname();
+        } else {
+            $nickname = $action->returnToArgs()[1]['nickname'];
+        }
+
+        $this->user = User::staticGet('nickname', $nickname);
+
+        if (!$this->user) {
+            // TRANS: Client error displayed when trying to display bookmarks for a non-existing user.
+            $this->clientError(_('No such user.'));
+            return false;
+        }
+
+        $action->menuItem(common_local_url('bookmarks', array('nickname' => $nickname)),
                           // TRANS: Menu item in sample plugin.
                           _m('Bookmarks'),
                           // TRANS: Menu item title in sample plugin.
-                          _m('A list of your bookmarks'), false, 'nav_social');
+                          _m('A list of your bookmarks'), false, 'nav_timeline_bookmarks');
         return true;
     }
 
