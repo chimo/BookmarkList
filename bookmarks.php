@@ -69,7 +69,12 @@ class BookmarksAction extends Action
         if (common_config('singleuser', 'enabled')) {
             $nickname = User::singleUserNickname();
         } else {
-            $nickname = $this->returnToArgs()[1]['nickname'];
+            // PHP 5.4
+            // $nickname = $this->returnToArgs()[1]['nickname'];
+
+            // PHP < 5.4
+            $nickname = $this->returnToArgs();
+            $nickname = $nickname[1]['nickname'];
         }
         
         $this->user = User::staticGet('nickname', $nickname);
