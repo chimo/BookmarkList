@@ -8,4 +8,4 @@ Tiny plugin to display your StatusNet Bookmarks
 Make sure the files are in a folder called `BookmarkList` if they're not already  
 Put the folder in your `/plugins/` directory  
 Tell `/config.php` to use it with: `addPlugin('BookmarkList');`  
-Visit `/username/bookmarks` on your SN instance to view your "username"'s bookmarks.
+A `Bookmarks` link should appear in the left-nav of your profile page.
