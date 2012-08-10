@@ -59,6 +59,7 @@ class BookmarkListPlugin extends Plugin
         switch ($cls)
         {
         case 'BookmarksAction':
+        case 'BookmarksrssAction':
             include_once $dir . '/' . strtolower(mb_substr($cls, 0, -6)) . '.php';
             return false;
         default:
@@ -78,11 +79,15 @@ class BookmarkListPlugin extends Plugin
         if (common_config('singleuser', 'enabled')) {
             $nickname = User::singleUserNickname();
             $m->connect('bookmarks',
-                        array('action' => 'bookmarks'),
-                        array('nickname' => $nickname)); // FIXME: useless
+                        array('action' => 'bookmarks', 'nickname' => $nickname));
+            $m->connect('bookmarks/rss',
+                        array('action' => 'bookmarksrss', 'nickname' => $nickname));
         } else {
             $m->connect(':nickname/bookmarks',
                         array('action' => 'bookmarks'),
+                        array('nickname' => Nickname::DISPLAY_FMT));
+            $m->connect(':nickname/bookmarks/rss',
+                        array('action' => 'bookmarksrss'),
                         array('nickname' => Nickname::DISPLAY_FMT));
         }
 

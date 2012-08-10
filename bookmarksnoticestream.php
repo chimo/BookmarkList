@@ -29,7 +29,7 @@ class RawBookmarksNoticeStream extends NoticeStream
             $qry .= 'AND notice.id <= ' . $max_id . ' ';
         }
 
-        // NOTE: we sort by fave time, not by notice time!
+        // NOTE: we sort by bookmark time, not by notice time!
         $qry .= 'ORDER BY created DESC ';
         if (!is_null($offset)) {
             $qry .= "LIMIT $limit OFFSET $offset";
