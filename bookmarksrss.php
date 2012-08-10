@@ -90,7 +90,6 @@ class BookmarksrssAction extends Rss10Action
     {
         $user    = $this->user;
 
-        // 
         $notice = new BookmarksNoticeStream($this->user->id, true);
         $notice = $notice->getNotices(0, NOTICES_PER_PAGE);
 

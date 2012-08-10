@@ -60,6 +60,7 @@ class BookmarkListPlugin extends Plugin
         {
         case 'BookmarksAction':
         case 'BookmarksrssAction':
+        case 'ApiTimelineBookmarksAction':
             include_once $dir . '/' . strtolower(mb_substr($cls, 0, -6)) . '.php';
             return false;
         default:
@@ -90,6 +91,11 @@ class BookmarkListPlugin extends Plugin
                         array('action' => 'bookmarksrss'),
                         array('nickname' => Nickname::DISPLAY_FMT));
         }
+
+        $m->connect('api/bookmarks/:id.:format',
+                    array('action' => 'ApiTimelineBookmarks', 
+                          'id' => Nickname::INPUT_FMT,
+                          'format' => '(xml|json|rss|atom|as)'));
 
         return true;
     }
