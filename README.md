@@ -4,7 +4,7 @@ BookmarkList
 Tiny plugin to display your StatusNet Bookmarks
 
 ## Note
-If you're using [Gnu Social](https://www.gnu.org/software/social/), you don't need this plugin; the functionality is built into the "Bookmarks" plugin that's included in the default install.
+If you're using [GNU social](http://gnu.io/), you don't need this plugin; the functionality is built into the "Bookmarks" plugin that's included in the default install.
 
 ## Instructions
 
